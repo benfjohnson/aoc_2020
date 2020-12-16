@@ -1,4 +1,5 @@
 mod one;
+mod two;
 
 use std::{
     fs::File,
@@ -29,5 +30,22 @@ fn main() {
     println!(
         "Three nums that add up to 2020 are: {}",
         one::find_three_values(day_one_input)
+    );
+
+    let day_two_answer: usize = lines_from_file("./input-files/two.txt")
+        .iter()
+        .map(two::line_to_valid_info)
+        .filter(two::password_is_valid)
+        .count();
+
+    let day_two_pt_2_answer: usize = lines_from_file("./input-files/two.txt")
+        .iter()
+        .map(two::line_to_valid_info)
+        .filter(two::password_is_valid_v2)
+        .count();
+
+    println!(
+        "The answer to the first part of day 2 is: {}. For pt. 2, the answer is {}!",
+        day_two_answer, day_two_pt_2_answer
     );
 }
