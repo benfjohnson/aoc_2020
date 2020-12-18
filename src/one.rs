@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 use std::iter::FromIterator;
 
-pub fn sum_expenses(items: Vec<i32>) -> i32 {
+fn sum_expenses(items: &Vec<i32>) -> i32 {
     // First, read everything into a HashSet
     let expense_set: HashSet<i32> = HashSet::from_iter(items.iter().cloned());
     // Then for each item, determine if the difference between itself and 2020 exists already
@@ -15,7 +15,7 @@ pub fn sum_expenses(items: Vec<i32>) -> i32 {
     correct_input * second_input
 }
 
-pub fn find_three_values(items: Vec<i32>) -> i32 {
+fn find_three_values(items: &Vec<i32>) -> i32 {
     let expense_set: HashSet<i32> = HashSet::from_iter(items.iter().cloned());
 
     for i in items.iter() {
@@ -28,4 +28,10 @@ pub fn find_three_values(items: Vec<i32>) -> i32 {
     }
 
     -1
+}
+
+pub fn get_answers(input: Vec<String>) -> (i32, i32) {
+    let nums: Vec<i32> = input.iter().map(|i| i.parse::<i32>().unwrap()).collect();
+
+    (sum_expenses(&nums), find_three_values(&nums))
 }

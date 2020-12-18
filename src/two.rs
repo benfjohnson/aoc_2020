@@ -1,4 +1,4 @@
-pub struct ValidationInfo {
+struct ValidationInfo {
     password: String,
     required_char: char,
     chars_allowed: (usize, usize),
@@ -13,7 +13,7 @@ fn get_num_range(s: &str) -> (usize, usize) {
     )
 }
 
-pub fn line_to_valid_info(l: &String) -> ValidationInfo {
+fn line_to_valid_info(l: &String) -> ValidationInfo {
     let sections: Vec<&str> = l.split(" ").collect();
 
     ValidationInfo {
@@ -23,7 +23,7 @@ pub fn line_to_valid_info(l: &String) -> ValidationInfo {
     }
 }
 
-pub fn password_is_valid(v: &ValidationInfo) -> bool {
+fn password_is_valid(v: &ValidationInfo) -> bool {
     let ValidationInfo {
         password,
         required_char,
@@ -36,7 +36,7 @@ pub fn password_is_valid(v: &ValidationInfo) -> bool {
 
 // In this rendition, pw is valid if exactly one of the required_chars exist
 // at the indicated index
-pub fn password_is_valid_v2(v: &ValidationInfo) -> bool {
+fn password_is_valid_v2(v: &ValidationInfo) -> bool {
     let ValidationInfo {
         password,
         required_char,
@@ -54,4 +54,13 @@ pub fn password_is_valid_v2(v: &ValidationInfo) -> bool {
     }
 
     total_occurrences == 1
+}
+
+pub fn get_answers(input: Vec<String>) -> (usize, usize) {
+    let valid_info = input.iter().map(line_to_valid_info);
+
+    (
+        valid_info.clone().filter(password_is_valid).count(),
+        valid_info.filter(password_is_valid_v2).count(),
+    )
 }
