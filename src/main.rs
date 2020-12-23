@@ -1,4 +1,5 @@
 mod one;
+mod three;
 mod two;
 
 use std::{
@@ -18,11 +19,11 @@ fn lines_from_file(filename: impl AsRef<Path>) -> Vec<String> {
 
 fn main() {
     //                TODO: Change me!
-    const DAY: &str = "two";
+    const DAY: &str = "three";
 
     let puzzle_input = lines_from_file(format!("./input-files/{}.txt", DAY));
     //                         TODO: Change me!
-    let (answer_1, answer_2) = two::get_answers(puzzle_input);
+    let (answer_1, answer_2) = three::get_answers(puzzle_input);
 
     println!(
         "The answers to part 1 and 2 of day {} are {} and {}!",
