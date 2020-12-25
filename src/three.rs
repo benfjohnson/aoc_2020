@@ -2,8 +2,6 @@ type Tree = ();
 
 type Forest = Vec<Vec<Option<Tree>>>;
 
-const RIGHT_SLOPE: usize = 3;
-
 fn input_line_to_row(input: Vec<&str>) -> Vec<Option<Tree>> {
     input
         .iter()
@@ -15,31 +13,42 @@ fn input_line_to_row(input: Vec<&str>) -> Vec<Option<Tree>> {
         .collect()
 }
 
-fn input_lines_to_forest(input: Vec<String>) -> Forest {
+fn input_lines_to_forest(input: &Vec<String>) -> Forest {
     input
         .iter()
         .map(|i| input_line_to_row(i.split("").collect()))
         .collect()
 }
 
-// Now we have our Forest type created. We should be able to, for each row of forest,
-// iterate over three, and down 1. At some point we'll pass our given input length..
-// but if we use the modulo operator we should be able to iterate from the remainder.
-
-fn get_num_trees(input: Vec<String>) -> usize {
+// Core logic used for both part 1 and 2
+fn get_num_trees(input: &Vec<String>, (x_slope, y_slope): (usize, usize)) -> usize {
     let forest: Forest = input_lines_to_forest(input);
 
-    // As mentioned in the above comment, used for tracking how beyond our input size we've gotten
+    // How wide is our forest?
     let forest_width: usize = forest[0].len();
-    println!("Length of forest: {}", forest_width);
-    let mut current_latitude: usize = 0;
 
-    // This is the answer to first problem of Day 3.
-    let sum_trees = forest.iter().fold(0, |sum, r| {
-        let relative_pos = current_latitude % forest_width;
-        current_latitude += RIGHT_SLOPE;
+    // We can't rely on our current row index to solely determine the x position
+    // in a particular iteration, because if we've skipped a row (early return)
+    // we shouldn't again walk forward `x_slope` number of characters
 
-        match r[relative_pos] {
+    // Said another way, with a slope of (1, 2), after including/counting (0, 0),
+    // our next spot should be (1, 2), not (2, 2) (0+1+1 after three iterations)
+    let mut current_x_pos = 0;
+
+    let sum_trees = forest.iter().enumerate().fold(0, |sum, (i, row)| {
+        // We should conditionally check rows based on whether we've
+        // sufficiently moved far enough down the Y axis
+        if i % y_slope != 0 {
+            return sum;
+        }
+
+        // Use modulus to wrap back around to the beginning of the row
+        // (this effectively "repeats" our input map horizontally)
+        let wrapping_x_position = current_x_pos % forest_width;
+        // Increment x_pos now that we've found the next position to check.
+        current_x_pos += x_slope;
+
+        match row[wrapping_x_position] {
             Some(_) => sum + 1,
             None => sum,
         }
@@ -49,5 +58,15 @@ fn get_num_trees(input: Vec<String>) -> usize {
 }
 
 pub fn get_answers(input: Vec<String>) -> (usize, usize) {
-    (get_num_trees(input), 0)
+    let answer_one = get_num_trees(&input, (3, 1));
+    let answer_two = vec![(1, 1), (3, 1), (5, 1), (7, 1), (1, 2)]
+        .iter()
+        .map(|coords| {
+            let a = get_num_trees(&input, *coords);
+            println!("Coords {:?} return {}", coords, a);
+            a
+        })
+        .fold(1, |product, num| product * num);
+
+    (answer_one, answer_two)
 }
